@@ -1,3 +1,3 @@
 require "sequel"
 
-DB = Sequel.sqlite("db/database.sqlite")
+DB = Sequel.connect(ENV.fetch("DATABASE_URL", "db/database.sqlite"))
