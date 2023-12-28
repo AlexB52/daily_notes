@@ -8,6 +8,7 @@ GEM
     irb (1.11.0)
       rdoc
       reline (>= 0.3.8)
+    minitest (5.20.0)
     nio4r (2.7.0)
     psych (5.1.2)
       stringio
@@ -19,6 +20,7 @@ GEM
     rackup (2.1.0)
       rack (>= 3)
       webrick (~> 1.8)
+    rake (13.1.0)
     rdoc (6.6.2)
       psych (>= 4.0.0)
     reline (0.4.1)
@@ -32,10 +34,12 @@ PLATFORMS
   x86_64-darwin-21
 
 DEPENDENCIES
-  debug
+  debug (~> 1.9)
+  minitest (~> 5.20)
   puma (~> 6.4)
   rack-test (~> 2.1)
   rackup (~> 2.1)
+  rake (~> 13.1)
   roda (~> 3.75)
 
 BUNDLED WITH

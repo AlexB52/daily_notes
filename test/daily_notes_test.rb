@@ -1,7 +1,4 @@
-require "minitest/autorun"
-require "rackup"
-require "rack/test"
-require "debug"
+require "test_helper"
 
 OUTER_APP = Rack::Builder.parse_file("config.ru")
 
