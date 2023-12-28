@@ -1,16 +1,16 @@
 require "roda"
 require "./config/sequel"
+require "./models/daily_note"
 
 module DailyNotes
   class App < Roda
     plugin :json
 
     route do |r|
-
       r.on "daily-notes" do
         r.is do
           r.get do
-            DB[:daily_notes].all
+            DailyNote.all
           end
         end
       end
