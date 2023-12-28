@@ -2,9 +2,9 @@ require "roda"
 require "./config/sequel"
 
 # populate the table
-DB[:items].insert(name: 'abc', price: rand * 100)
-DB[:items].insert(name: 'def', price: rand * 100)
-DB[:items].insert(name: 'ghi', price: rand * 100)
+DB[:daily_notes].insert(name: 'abc')
+DB[:daily_notes].insert(name: 'def')
+DB[:daily_notes].insert(name: 'ghi')
 
 module DailyNotes
   class App < Roda
@@ -15,7 +15,7 @@ module DailyNotes
       r.on "daily-notes" do
         r.is do
           r.get do
-            DB[:items].all
+            DB[:daily_notes].all
           end
         end
       end
