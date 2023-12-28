@@ -5,9 +5,14 @@ module DailyNotes
     plugin :json
 
     route do |r|
-     { a: 1,b:2 }
-    end
 
-    
+      r.on "daily-notes" do
+        r.is do
+          r.get do
+            { a: 1, b: 2 }
+          end
+        end
+      end
+    end
   end
 end
