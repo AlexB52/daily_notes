@@ -31,11 +31,13 @@ GEM
     sequel (5.75.0)
       bigdecimal
     sqlite3 (1.7.0-x86_64-darwin)
+    sqlite3 (1.7.0-x86_64-linux)
     stringio (3.1.0)
     webrick (1.8.1)
 
 PLATFORMS
   x86_64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   debug (~> 1.9)
