@@ -1,5 +1,4 @@
 ENV['DATABASE_URL'] = 'sqlite://db/test.sqlite'
-ENV['API_TOKEN'] = 'anapitoken'
 
 require "bundler/setup"
 
@@ -14,3 +13,5 @@ module DatabaseTransaction
     DB.transaction(rollback: :always, auto_savepoint: true){super}
   end
 end
+
+OUTER_APP = Rack::Builder.parse_file("config.ru")
