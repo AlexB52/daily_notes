@@ -17,7 +17,7 @@ namespace :db do
     require "sequel/core"
     Sequel.extension :migration
     version = args[:version].to_i if args[:version]
-    Sequel.connect(ENV.fetch("DATABASE_URL")) do |db|
+    Sequel.connect(ENV.fetch("DATABASE_URL", "sqlite://db/database.sqlite")) do |db|
       Sequel::Migrator.run(db, "db/migrations", target: version)
     end
   end
