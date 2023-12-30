@@ -1,4 +1,5 @@
 ENV['DATABASE_URL'] = 'sqlite://db/test.sqlite'
+ENV['API_TOKEN'] = 'anapitoken'
 
 require "bundler/setup"
 

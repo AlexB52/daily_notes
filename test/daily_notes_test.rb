@@ -12,7 +12,21 @@ module DailyNotes
       OUTER_APP
     end
 
+    def test_authentication
+      header 'Authorization', 'nottheapitoken'
+
+      get "/daily-notes"
+
+      assert_equal 401, last_response.status
+
+      post "/daily-notes"
+
+      assert_equal 401, last_response.status
+    end
+
     def test_daily_notes_index
+      header 'Authorization', ENV['API_TOKEN']
+
       note1 = DailyNote.create(title: 'note 1')
       note2 = DailyNote.create(title: 'note 2')
 
@@ -24,6 +38,8 @@ module DailyNotes
     end
 
     def test_post_notes_index
+      header 'Authorization', ENV['API_TOKEN']
+
       post "/daily-notes", { title: 'note 1' }
 
       assert last_response.created?
