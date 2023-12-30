@@ -5,17 +5,17 @@ module DailyNotes
     include DatabaseTransaction
 
     def test_to_json
-      note = DailyNote.create(name: 'note 1')
+      note = DailyNote.create(title: 'note 1')
 
       assert_equal(
-        { 'id' => note.id, 'name' => 'note 1' },
+        { 'id' => note.id, 'title' => 'note 1' },
         JSON.parse(note.to_json)
       )
 
-      note = DailyNote.new(name: 'note 1')
+      note = DailyNote.new(title: 'note 1')
 
       assert_equal(
-        { 'id' => nil, 'name' => 'note 1' },
+        { 'id' => nil, 'title' => 'note 1' },
         JSON.parse(note.to_json)
       )
     end

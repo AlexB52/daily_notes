@@ -13,8 +13,8 @@ module DailyNotes
     end
 
     def test_daily_notes_index
-      note1 = DailyNote.create(name: 'note 1')
-      note2 = DailyNote.create(name: 'note 2')
+      note1 = DailyNote.create(title: 'note 1')
+      note2 = DailyNote.create(title: 'note 2')
 
       get "/daily-notes"
 

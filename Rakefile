@@ -21,4 +21,11 @@ namespace :db do
       Sequel::Migrator.run(db, "db/migrations", target: version)
     end
   end
+  namespace :test do
+    desc "Run migrations on test database"
+    task :prepare, [:version] do |t, args|
+      ENV["DATABASE_URL"] = "sqlite://db/test.sqlite"
+      Rake::Task["db:migrate"].invoke
+    end
+  end
 end
