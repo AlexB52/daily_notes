@@ -19,5 +19,13 @@ module DailyNotes
         JSON.parse(note.to_json)
       )
     end
+
+    def test_name_validation
+      note = DailyNote.new
+
+      refute note.valid?
+
+      assert_equal ["title can't be blank"], note.errors.full_messages
+    end
   end
 end

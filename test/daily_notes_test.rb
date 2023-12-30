@@ -22,5 +22,20 @@ module DailyNotes
 
       assert_equal [note1, note2].to_json, last_response.body
     end
+
+    def test_post_notes_index
+      post "/daily-notes", { title: 'note 1' }
+
+      assert last_response.created?
+      assert_equal 1, DailyNote.count
+
+      post "/daily-notes", {}
+
+      assert_equal 400, last_response.status
+      assert_equal(
+        { "title" => ["can't be blank"] },
+        JSON.parse(last_response.body)
+      )
+    end
   end
 end
