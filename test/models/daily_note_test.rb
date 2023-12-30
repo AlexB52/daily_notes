@@ -8,14 +8,14 @@ module DailyNotes
       note = DailyNote.create(title: 'note 1')
 
       assert_equal(
-        { 'id' => note.id, 'title' => 'note 1' },
+        { 'id' => note.id, 'title' => 'note 1', 'body' => nil },
         JSON.parse(note.to_json)
       )
 
       note = DailyNote.new(title: 'note 1')
 
       assert_equal(
-        { 'id' => nil, 'title' => 'note 1' },
+        { 'id' => nil, 'title' => 'note 1', 'body' => nil },
         JSON.parse(note.to_json)
       )
     end
