@@ -1,4 +1,4 @@
-ENV['DATABASE_URL'] = 'sqlite://./db/test.sqlite'
+ENV['DATABASE_URL'] = 'sqlite://db/test.sqlite'
 
 require "bundler/setup"
 
