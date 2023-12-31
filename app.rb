@@ -24,6 +24,7 @@ module DailyNotes
     plugin :json
     plugin :request_headers
     plugin :hooks
+    plugin :all_verbs
 
     before do
       authorise!(request)
@@ -46,6 +47,17 @@ module DailyNotes
               response.status = 400
               note.errors
             end
+          end
+        end
+
+        r.on Integer do |id|
+          r.delete do
+            if DailyNote[id]&.delete
+              response.status = 200
+            else
+              response.status = 422
+            end
+            nil
           end
         end
       end
