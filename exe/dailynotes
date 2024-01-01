@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+# require "bundler/setup"
+# require 'optparse'
+
+arguments = ARGV
+case (command = arguments.shift)
+when  "server"
+  system "bin/rackup --host 0.0.0.0 --quiet"
+end
