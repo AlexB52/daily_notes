@@ -1,4 +1,5 @@
 require "roda"
+require 'logger'
 require "./config/sequel"
 require "./models/daily_note"
 
@@ -23,11 +24,13 @@ module DailyNotes
   class App < Roda
     include Authentication
 
+    plugin :common_logger, Logger.new('logs/app.log')
     plugin :halt
     plugin :json
     plugin :request_headers
     plugin :hooks
     plugin :all_verbs
+    plugin :common_logger
     plugin :error_handler do |e|
       "Something went wrong: #{e.message}"
     end

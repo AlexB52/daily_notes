@@ -1,4 +1,4 @@
 #!/bin/bash
 
-bin/rackup --host 0.0.0.0 &
+bin/rackup --host 0.0.0.0 --quiet & 
 echo $! > tmp/pid
