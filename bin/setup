@@ -1,0 +1,4 @@
+#!/bin/bash
+
+bin/rake db:migrate
+mkdir -p tmp logs
