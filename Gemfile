@@ -13,6 +13,9 @@ gem "rake", "~> 13.1"
 gem "sequel", "~> 5.75"
 gem "sqlite3", "~> 1.7"
 
+# command line
+gem "tty-table", "~> 0.12.0"
+
 group :test, :development do
   gem "rack-test", "~> 2.1"
   gem "debug", "~> 1.9"

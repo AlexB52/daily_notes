@@ -1,10 +1,57 @@
 #!/usr/bin/env ruby
 
 # require "bundler/setup"
-# require 'optparse'
+require "debug"
 
 arguments = ARGV
-case (command = arguments.shift)
+
+case (route = arguments.shift)
 when  "server"
   system "bin/rackup --host 0.0.0.0 --quiet"
+when "notes"
+  case (command = arguments.shift)
+  when "list"
+    require 'net/http'
+    require "json"
+    require "tty-table"
+
+    uri = URI("#{ENV.fetch("DOMAIN")}/daily-notes")
+    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      req = Net::HTTP::Get.new(uri)
+      req['Authorization'] = ENV.fetch("API_TOKEN")
+      http.request(req)
+    end
+
+    result = "no notes"
+    unless (result = JSON.parse(res.body)).empty?
+      table = TTY::Table.new(header: result.first.keys)
+      result.each { |note| table << note.values }
+      result = table.render(:ascii)
+    end
+    puts result
+
+  when "delete"
+    require "optparse"
+    require "net/http"
+
+    options = {}
+    OptionParser.new do |opts|
+      opts.on("--id ID", Integer, "The id of the note") do |id|
+        options[:id] = id
+      end
+    end.parse!(arguments)
+
+    uri = URI("#{ENV.fetch("DOMAIN")}/daily-notes/#{options[:id]}")
+    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      req = Net::HTTP::Delete.new(uri)
+      req['Authorization'] = ENV.fetch("API_TOKEN")
+      http.request(req)
+    end
+
+    result = "%s %s" % [res.code, res.message]
+    unless res.body.empty?
+      result += ": #{res.body}"
+    end
+    puts result
+  end
 end
