@@ -14,6 +14,14 @@ module DailyNotes
       ENV['API_TOKEN'] = nil
     end
 
+    def test_root_path
+      ENV['API_TOKEN'] = 'atoken'
+
+      get "/"
+
+      assert_equal "ok", last_response.body
+    end
+
     def test_daily_notes_index
       note1 = DailyNote.create(title: 'note 1')
       note2 = DailyNote.create(title: 'note 2')

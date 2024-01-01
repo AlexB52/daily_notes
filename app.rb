@@ -4,7 +4,10 @@ require "./models/daily_note"
 
 module DailyNotes
   module Authentication
+    UNAUTHORISED_PATHS = %w(/)
+
     def authorise!(request)
+      return if UNAUTHORISED_PATHS.include?(request.path)
       return if authorised?(request.headers['Authorization'])
 
       request.halt(401)
@@ -31,6 +34,11 @@ module DailyNotes
     end
 
     route do |r|
+      r.root do
+        response = 200
+        "ok"
+      end
+
       r.on "daily-notes" do
         r.get do
           DailyNote.all
