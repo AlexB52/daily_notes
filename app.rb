@@ -32,32 +32,46 @@ module DailyNotes
 
     route do |r|
       r.on "daily-notes" do
-        r.is do
-          r.get do
-            DailyNote.all
-          end
+        r.get do
+          DailyNote.all
+        end
 
-          r.post do
-            note = DailyNote.new r.params.slice('title')
+        r.post do
+          note = DailyNote.new r.params
 
-            if note.valid? && note.save
-              response.status = 201
-              note.attributes
-            else
-              response.status = 400
-              note.errors
-            end
+          if note.save(raise_on_failure: false)
+            response.status = 201
+            note.attributes
+          else
+            response.status = 422
+            note.errors
           end
         end
 
         r.on Integer do |id|
+          r.put do
+            unless (note = DailyNote[id])
+              response.status = 422
+              return
+            end
+
+            note.set(r.params)
+
+            if note.save(raise_on_failure: false)
+              response.status = 200
+              note.attributes
+            else
+              response.status = 422
+              note.errors
+            end
+          end
+
           r.delete do
             if DailyNote[id]&.delete
               response.status = 200
             else
               response.status = 422
-            end
-            nil
+            end and return
           end
         end
       end
