@@ -53,5 +53,38 @@ when "notes"
       result += ": #{res.body}"
     end
     puts result
+
+  when "update"
+    require "optparse"
+    require "net/http"
+
+    options = {}
+    OptionParser.new do |opts|
+      opts.on("--id ID", Integer, "The id of the note") do |id|
+        options[:id] = id
+      end
+
+      opts.on("--title TITLE", "The title of the note") do |title|
+        options[:title] = title
+      end
+
+      opts.on("--body BODY", "The body of the note") do |body|
+        options[:body] = body
+      end
+    end.parse!(arguments)
+
+    uri = URI("#{ENV.fetch("DOMAIN")}/daily-notes/#{options[:id]}")
+    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      uri.query = URI.encode_www_form(options)
+      req = Net::HTTP::Put.new(uri)
+      req['Authorization'] = ENV.fetch("API_TOKEN")
+      http.request(req)
+    end
+
+    result = "%s %s" % [res.code, res.message]
+    unless res.body.empty?
+      result += ": #{res.body}"
+    end
+    puts result
   end
 end
