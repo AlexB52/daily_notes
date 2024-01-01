@@ -28,6 +28,9 @@ module DailyNotes
     plugin :request_headers
     plugin :hooks
     plugin :all_verbs
+    plugin :error_handler do |e|
+      "Something went wrong: #{e.message}"
+    end
 
     before do
       authorise!(request)
@@ -40,12 +43,16 @@ module DailyNotes
       end
 
       r.on "daily-notes" do
+        def note_params(request)
+          request.params.slice('title', 'body')
+        end
+
         r.get do
           DailyNote.all
         end
 
         r.post do
-          note = DailyNote.new r.params
+          note = DailyNote.new note_params(r)
 
           if note.save(raise_on_failure: false)
             response.status = 201
@@ -59,11 +66,11 @@ module DailyNotes
         r.on Integer do |id|
           r.put do
             unless (note = DailyNote[id])
-              response.status = 422
-              return
+              response.status = 404
+              return "unknown daily note"
             end
 
-            note.set(r.params)
+            note.set(note_params(r))
 
             if note.save(raise_on_failure: false)
               response.status = 200
@@ -75,7 +82,12 @@ module DailyNotes
           end
 
           r.delete do
-            if DailyNote[id]&.delete
+            unless (note = DailyNote[id])
+              response.status = 404
+              return "unknown daily note"
+            end
+
+            if DailyNote[id].delete
               response.status = 200
             else
               response.status = 422

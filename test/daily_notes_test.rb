@@ -70,7 +70,7 @@ module DailyNotes
     def test_update_daily_notes_with_invalid_id
       put "/daily-notes/9999", { title: 'updated title' }
 
-      assert last_response.unprocessable?
+      assert last_response.not_found?
     end
 
     def test_update_daily_notes_with_invalid_params
@@ -90,7 +90,7 @@ module DailyNotes
     def test_delete_invalid_id
       delete "/daily-notes/9999"
 
-      assert last_response.unprocessable?
+      assert last_response.not_found?
     end
   end
 end
