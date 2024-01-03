@@ -22,6 +22,22 @@ module DailyNotes
       assert_equal "ok", last_response.body
     end
 
+    def test_show_daily_note
+      note = DailyNote.create(title: 'note 1')
+
+      get "/daily-notes/#{note.id}"
+
+      assert last_response.ok?
+
+      assert_equal note.attributes.to_json, last_response.body
+    end
+
+    def test_show_daily_note_with_invalid_id
+      get "/daily-notes/9999"
+
+      assert last_response.not_found?
+    end
+
     def test_daily_notes_index
       note1 = DailyNote.create(title: 'note 1')
       note2 = DailyNote.create(title: 'note 2')

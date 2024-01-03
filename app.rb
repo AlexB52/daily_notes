@@ -50,51 +50,65 @@ module DailyNotes
           request.params.slice('title', 'body')
         end
 
-        r.get do
-          DailyNote.all
-        end
-
-        r.post do
-          note = DailyNote.new note_params(r)
-
-          if note.save(raise_on_failure: false)
-            response.status = 201
-            note.attributes
-          else
-            response.status = 422
-            note.errors
+        r.is do
+          r.get do
+            DailyNote.all
           end
-        end
 
-        r.on Integer do |id|
-          r.put do
-            unless (note = DailyNote[id])
-              response.status = 404
-              return "unknown daily note"
-            end
-
-            note.set(note_params(r))
+          r.post do
+            note = DailyNote.new note_params(r)
 
             if note.save(raise_on_failure: false)
-              response.status = 200
+              response.status = 201
               note.attributes
             else
               response.status = 422
               note.errors
             end
           end
+        end
 
-          r.delete do
-            unless (note = DailyNote[id])
-              response.status = 404
-              return "unknown daily note"
+        r.on Integer do |id|
+          r.is do
+            r.get do
+              unless (note = DailyNote[id])
+                response.status = 404
+                return "unknown daily note"
+              end
+
+              response.status = 200
+              note.attributes
             end
 
-            if DailyNote[id].delete
-              response.status = 200
-            else
-              response.status = 422
-            end and return
+            r.put do
+              unless (note = DailyNote[id])
+                response.status = 404
+                return "unknown daily note"
+              end
+
+              note.set(note_params(r))
+
+              if note.save(raise_on_failure: false)
+                response.status = 200
+                note.attributes
+              else
+                response.status = 422
+                note.errors
+              end
+            end
+
+            r.delete do
+              unless (note = DailyNote[id])
+                response.status = 404
+                return "unknown daily note"
+              end
+
+              if DailyNote[id].delete
+                response.status = 200
+              else
+                response.status = 422
+              end and return
+            end
           end
         end
       end
