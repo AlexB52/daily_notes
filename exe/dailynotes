@@ -3,6 +3,8 @@
 # require "bundler/setup"
 require "debug"
 
+@ssl = !ENV['DISABLE_SSL']
+
 arguments = ARGV
 
 case (route = arguments.shift)
@@ -16,7 +18,7 @@ when "notes"
     require "tty-table"
 
     uri = URI("#{ENV.fetch("DOMAIN")}/daily-notes")
-    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: @ssl) do |http|
       req = Net::HTTP::Get.new(uri)
       req['Authorization'] = ENV.fetch("API_TOKEN")
       http.request(req)
@@ -42,8 +44,52 @@ when "notes"
     end.parse!(arguments)
 
     uri = URI("#{ENV.fetch("DOMAIN")}/daily-notes/#{options[:id]}")
-    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: @ssl) do |http|
       req = Net::HTTP::Delete.new(uri)
+      req['Authorization'] = ENV.fetch("API_TOKEN")
+      http.request(req)
+    end
+
+    result = "%s %s" % [res.code, res.message]
+    unless res.body.empty?
+      result += ": #{res.body}"
+    end
+    puts result
+
+  when "edit"
+    require "optparse"
+    require "net/http"
+    require "tty-prompt"
+    require "json"
+
+    options = {}
+    OptionParser.new do |opts|
+      opts.on("--id ID", Integer, "The id of the note") do |id|
+        options[:id] = id
+      end
+    end.parse!(arguments)
+
+    uri = URI("#{ENV.fetch("DOMAIN")}/daily-notes/#{options[:id]}")
+    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: @ssl) do |http|
+      req = Net::HTTP::Get.new(uri)
+      req['Authorization'] = ENV.fetch("API_TOKEN")
+      http.request(req)
+    end
+
+    prompt = TTY::Prompt.new
+    params = {}
+    JSON.parse(res.body).except('id').each do |key, value|
+      params[key] = if key == 'body'
+        prompt.multiline(key, default: value).join("\n")
+      else
+        prompt.ask(key, default: value)
+      end
+    end
+
+    uri = URI("#{ENV.fetch("DOMAIN")}/daily-notes/#{options[:id]}")
+    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: @ssl) do |http|
+      uri.query = URI.encode_www_form(params)
+      req = Net::HTTP::Put.new(uri)
       req['Authorization'] = ENV.fetch("API_TOKEN")
       http.request(req)
     end
@@ -74,7 +120,7 @@ when "notes"
     end.parse!(arguments)
 
     uri = URI("#{ENV.fetch("DOMAIN")}/daily-notes/#{options[:id]}")
-    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: @ssl) do |http|
       uri.query = URI.encode_www_form(options)
       req = Net::HTTP::Put.new(uri)
       req['Authorization'] = ENV.fetch("API_TOKEN")

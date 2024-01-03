@@ -15,6 +15,7 @@ gem "sqlite3", "~> 1.7"
 
 # command line
 gem "tty-table", "~> 0.12.0"
+gem "tty-prompt", "~> 0.23.1"
 
 group :test, :development do
   gem "rack-test", "~> 2.1"
